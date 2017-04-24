@@ -9,4 +9,5 @@ package com.androidumloader;
  * @time: 2017/4/24 11:53
  ******************************************/
 public class ImageLoaderConfiguration {
+
 }

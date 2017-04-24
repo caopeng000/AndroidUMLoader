@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2011-2013 Sergey Tarasevich
+ * Copyright 2013 Sergey Tarasevich
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.androidumloader;
+package com.androidumloader.listener;
 
-import android.graphics.Bitmap;
 import android.view.View;
 
+/**
+ * Listener for image loading progress.
+ *
+ * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
+ * @since 1.9.1
+ */
+public interface ImageLoadingProgressListener {
 
-public interface ImageLoadingListener {
-
-
-    void onLoadingStarted(String imageUri, View view);
-
-
-    void onLoadingFailed(String imageUri, View view, FailReason failReason);
-
-
-    void onLoadingComplete(String imageUri, View view, Bitmap loadedImage);
-
-
-    void onLoadingCancelled(String imageUri, View view);
+	/**
+	 * Is called when image loading progress changed.
+	 *
+	 * @param imageUri Image URI
+	 * @param view     View for image. Can be <b>null</b>.
+	 * @param current  Downloaded size in bytes
+	 * @param total    Total size in bytes
+	 */
+	void onProgressUpdate(String imageUri, View view, int current, int total);
 }

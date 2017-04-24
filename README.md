@@ -7,6 +7,9 @@ AndroidUMLoader图片加载库
 3.加载配置(占位图、错误图、是否缓存、加载图形(接口))  DisplayImageOptions 使用建造者模式
 4.ImageLoadingListener 监听回调
 5.ImageLoadingProgressListener 进度回调(接口分离)
+6.下载器
+7.解码器
+8.缓存
 
 二、新增aware包(防止内存泄露)
 1.新增ImageAware接口，主要负责获取图片的宽高、是否被回收、得到自身图片、设置图片
@@ -54,3 +57,22 @@ AndroidUMLoader图片加载库
 
    <3>considerExactScaleAndOrientatiton  根据参数将图片放大、翻转、旋转为合适的样子返回。
 
+五、新增cache包和memory包
+1.新增MemoryCache接口，用于对内存缓存的增、删、查
+2.新增BaseMemoryCache(抽象)类，实现MemoryCache接口 (基本的内存缓存)
+  <1>通过保存 Map<String, Reference<Bitmap>> 将强引用保存为弱引用
+  <2>抽象方法createReference
+3.新增LimitedMemoryCache(抽象)类，继承BaseMemoryCache类(判断缓存值超过最大值的情况)
+  <1>构造方法传入内存最大值
+  <2>通过AtomicInteger 来时刻查询当然缓存的最大值
+  <3>通过List<Bitmap>保存图片
+  <4>在每次put的时候，判断当前内存+新增的一个图片的内存如果大于最大值，就从集合中删除Bitmap然后AtomicInteger减去第一次存放的bitmap的大小，否则添加集合、添加AtomicInteger，然后调用super添加进入
+4.新增FIFOLimitedMemoryCache类，继承LimitedMemoryCache类(先进先出内存缓存类)
+  <1>内部保存了一个集合队列
+  <2>put的时候调用super.put如果成功了则添加到集合中
+5.新增WeakMemoryCache类继承BaseMemoryCache类
+  <1>实现了createReference方法，将Bitmap转化成WeakReference
+6.新增LruMemoryCache类实现MemoryCache(Least recently used 最近最少使用算法这个是重点)
+  <1>通过LinkedHashMap<String, Bitmap>来管理图片
+  <2>LinkedHashMap accessOrder设为true以后，最近访问的数据将会被放到前面，
+  <3>清理缓存，如果超出最大值，则需要删除老的数据

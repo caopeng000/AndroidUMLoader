@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Sergey Tarasevich
+ * Copyright 2011-2014 Sergey Tarasevich
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.androidumloader;
+package com.androidumloader.cache.memory.impl;
 
-import android.view.View;
+import android.graphics.Bitmap;
+
+import com.androidumloader.cache.memory.BaseMemoryCache;
+
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 
 /**
- * Listener for image loading progress.
+ * Memory cache with {@linkplain WeakReference weak references} to {@linkplain android.graphics.Bitmap bitmaps}<br />
+ * <br />
+ * <b>NOTE:</b> This cache uses only weak references for stored Bitmaps.
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
- * @since 1.9.1
+ * @since 1.5.3
  */
-public interface ImageLoadingProgressListener {
-
-	/**
-	 * Is called when image loading progress changed.
-	 *
-	 * @param imageUri Image URI
-	 * @param view     View for image. Can be <b>null</b>.
-	 * @param current  Downloaded size in bytes
-	 * @param total    Total size in bytes
-	 */
-	void onProgressUpdate(String imageUri, View view, int current, int total);
+public class WeakMemoryCache extends BaseMemoryCache {
+	@Override
+	protected Reference<Bitmap> createReference(Bitmap value) {
+		return new WeakReference<Bitmap>(value);
+	}
 }
