@@ -76,3 +76,7 @@ AndroidUMLoader图片加载库
   <1>通过LinkedHashMap<String, Bitmap>来管理图片
   <2>LinkedHashMap accessOrder设为true以后，最近访问的数据将会被放到前面，
   <3>清理缓存，如果超出最大值，则需要删除老的数据
+
+六、新增disc包和naming包
+1.新增FileNameGenerator接口 判断给文件设置名称
+2.新增HashCodeFileNameGenerator类，实现FileNameGenerator接口
