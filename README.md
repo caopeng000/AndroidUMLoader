@@ -13,7 +13,7 @@ AndroidUMLoader图片加载库
 
 二、新增aware包(防止内存泄露)
 1.新增ImageAware接口，主要负责获取图片的宽高、是否被回收、得到自身图片、设置图片
-2.新增ViewAware类(抽象类)，该类继承ImageAware接口
+2.新增ViewAware类(抽象类)，该类实现ImageAware接口
    <1>获取传递过来的ImageView将其包装成WeakReference<View>
    <2>在获取图片宽高的时候，先判断WeakReference<View>是否存在，然后通过getLayoutParams得到宽高
    <3>在复写setImageDrawable的时候要先判断是否在主线程，否则抛出异常
@@ -23,13 +23,13 @@ AndroidUMLoader图片加载库
 三、新增download包(下载类)
 1.新增ImageDownloader接口，返回一个InputStream
 2.新增BaseImageDownloader类，实现ImageDownloader接口，完成从网络、Assects、file、drawable的流
-   <1>InputStream的装饰者，可通过available()函数得到 InputStream 对应数据源的长度(总字节数)。主要用于计算文件存储进度即图片下载进度时的总进度。
+   <1>ContentLengthInputStream 是InputStream的装饰者，可通过available()函数得到 InputStream 对应数据源的长度(总字节数)。主要用于计算文件存储进度即图片下载进度时的总进度。
    <2>增加对网络、Assects、file、drawable获取流
 
 四、新增decode包(通过流解析成图片)
 1.新增ImageDecoder接口，通过ImageDecodingInfo得到Bitmap对象
 2.新增BaseImageDecoder类，实现ImageDecoder接口获取Bitmap
-   <1>拿到流以后 defineImageSizeAndRotation 定义文件大小和图片旋转方向
+   <1>拿到流以后 defineImageSizeAndRotation 定义文件大小和获取图片旋转方向
 
    <2>重置流 ExifInfo保存了图片的一些旋转、翻转等信息,接下来因为已经读了一次流InputStream取到了图片大小信息,后面还要读流
       1.首先判断流是否支持标记mark,如果支持就可以调用reset()方法重置,默认的InputStream是不支持的,也就是只能读一次,输入管道内容就没了,但是当前这个流是
@@ -77,6 +77,15 @@ AndroidUMLoader图片加载库
   <2>LinkedHashMap accessOrder设为true以后，最近访问的数据将会被放到前面，
   <3>清理缓存，如果超出最大值，则需要删除老的数据
 
-六、新增disc包和naming包
+六、新增naming包(文件命名)
 1.新增FileNameGenerator接口 判断给文件设置名称
 2.新增HashCodeFileNameGenerator类，实现FileNameGenerator接口
+
+七、新增disc包(硬盘缓存)
+1.新增DiskCache接口 增、删、查
+2.新增BaseDiskCache类，实现DiskCache接口
+  <1>save的时候先创建了一个临时文件，当缓存完毕的时候通过重命名改成之前的文件renameto
+  <2>clear的时候统一删除文件夹下的所有文件
+3.新增LimitedAgeDiskCache类，继承BaseDiskCache(判断文件缓存过期时间)
+  <1>save的时候修改文件的最后修改日期，然后放到Map里
+  <2>get的时候先从Map中读取文件得到最后修改日期，如果当前时间减去最后修改时间大于设定的最大过期时间，就删除，同事移出Map中的对象
