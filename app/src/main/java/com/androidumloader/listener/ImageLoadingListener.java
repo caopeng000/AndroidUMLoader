@@ -18,7 +18,7 @@ package com.androidumloader.listener;
 import android.graphics.Bitmap;
 import android.view.View;
 
-import com.androidumloader.FailReason;
+import com.androidumloader.assist.FailReason;
 
 
 public interface ImageLoadingListener {

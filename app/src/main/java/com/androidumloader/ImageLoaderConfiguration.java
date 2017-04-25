@@ -4,13 +4,18 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 
+import com.androidumloader.assist.FlushedInputStream;
+import com.androidumloader.assist.ImageSize;
+import com.androidumloader.assist.QueueProcessingType;
 import com.androidumloader.cache.disc.DiskCache;
 import com.androidumloader.cache.disc.naming.FileNameGenerator;
 import com.androidumloader.cache.memory.MemoryCache;
+import com.androidumloader.cache.memory.impl.FuzzyKeyMemoryCache;
 import com.androidumloader.decode.ImageDecoder;
 import com.androidumloader.download.ImageDownloader;
 import com.androidumloader.process.BitmapProcessor;
 import com.androidumloader.utils.L;
+import com.androidumloader.utils.MemoryCacheUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

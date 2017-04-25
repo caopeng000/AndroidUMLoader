@@ -158,4 +158,76 @@ InputStream的装饰者，可通过available()函数得到 InputStream 对应数
 4.新增CircleBitmapDisplayer类，加载圆形类
 5.新增RoundedBitmapDisplayer类，加载圆角类
 6.新增RoundedVignetteBitmapDisplayer类，加载圆角并且有影晕效果
+十二、新增ImageLoadingInfo类
+  加载和显示图片任务需要的信息。
+  String uri 图片 url。
+  String memoryCacheKey 图片缓存 key。
+  ImageAware imageAware 需要加载图片的对象。
+  ImageSize targetSize 图片的显示尺寸。
+  DisplayImageOptions options 图片显示的配置项。
+  ImageLoadingListener listener 图片加载各种时刻的回调接口。
+  ImageLoadingProgressListener progressListener 图片加载进度的回调接口。
+  ReentrantLock loadFromUriLock 图片加载中的重入锁。
+十三、新增MemoryCacheUtils类
+  内存缓存工具类。可用于根据 uri 生成内存缓存 key，缓存 key 比较，根据 uri 得到所有相关的 key 或图片，删除某个 uri 的内存缓存。
+  generateKey(String imageUri, ImageSize targetSize)
+  根据 uri 生成内存缓存 key，key 规则为[imageUri]_[width]x[height]。
+十四、新增FuzzyKeyMemoryCache类
+  如果内存缓存不允许缓存一张图片的多个尺寸，则用FuzzyKeyMemoryCache做封装，同一个图片新的尺寸会覆盖缓存中该图片老的尺寸。
+十五、新增LoadAndDisplayImageTask类
+  加载并显示图片的Task，实现了Runnable接口，用于从网络、文件系统或内存获取图片并解析，然后调用DisplayBitmapTask在ImageAware中显示图片。
+  主要函数：
+  (1) run()
+  获取图片并显示，核心代码如下：
+  bmp = configuration.memoryCache.get(memoryCacheKey);
+  if (bmp == null || bmp.isRecycled()) {
+      bmp = tryLoadBitmap();
+      ...
+      ...
+      ...
+      if (bmp != null && options.isCacheInMemory()) {
+          L.d(LOG_CACHE_IMAGE_IN_MEMORY, memoryCacheKey);
+          configuration.memoryCache.put(memoryCacheKey, bmp);
+      }
+  }
+  ……
+  DisplayBitmapTask displayBitmapTask = new DisplayBitmapTask(bmp, imageLoadingInfo, engine, loadedFrom);
+  runTask(displayBitmapTask, syncLoading, handler, engine);
 
+  从上面代码段中可以看到先是从内存缓存中去读取 bitmap 对象，若 bitmap 对象不存在，则调用 tryLoadBitmap() 函数获取 bitmap 对象，获取成功后若在 DisplayImageOptions.Builder 中设置了 cacheInMemory(true), 同时将 bitmap 对象缓存到内存中。
+  最后新建DisplayBitmapTask显示图片。
+  (2) tryLoadBitmap()
+  从磁盘缓存或网络获取图片，核心代码如下：
+  File imageFile = configuration.diskCache.get(uri);
+  if (imageFile != null && imageFile.exists()) {
+      ...
+      bitmap = decodeImage(Scheme.FILE.wrap(imageFile.getAbsolutePath()));
+  }
+  if (bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+      ...
+      String imageUriForDecoding = uri;
+      if (options.isCacheOnDisk() && tryCacheImageOnDisk()) {
+          imageFile = configuration.diskCache.get(uri);
+          if (imageFile != null) {
+              imageUriForDecoding = Scheme.FILE.wrap(imageFile.getAbsolutePath());
+          }
+      }
+      checkTaskNotActual();
+      bitmap = decodeImage(imageUriForDecoding);
+      ...
+  }
+  首先根据 uri 看看磁盘中是不是已经缓存了这个文件，如果已经缓存，调用 decodeImage 函数，将图片文件 decode 成 bitmap 对象；
+  如果 bitmap 不合法或缓存文件不存在，判断是否需要缓存在磁盘，需要则调用tryCacheImageOnDisk()函数去下载并缓存图片到本地磁盘，
+  再通过decodeImage(imageUri)函数将图片文件 decode 成 bitmap 对象，否则直接通过decodeImage(imageUriForDecoding)下载图片并解析。
+(3) tryCacheImageOnDisk()
+  下载图片并存储在磁盘内，根据磁盘缓存图片最长宽高的配置处理图片。
+      loaded = downloadImage();
+  主要就是这一句话，调用下载器下载并保存图片。
+  如果你在ImageLoaderConfiguration中还配置了maxImageWidthForDiskCache或者maxImageHeightForDiskCache，还会调用resizeAndSaveImage()函数，调整图片尺寸，并保存新的图片文件。
+(4) downloadImage()
+  下载图片并存储在磁盘内。调用getDownloader()得到ImageDownloader去下载图片。
+(5) resizeAndSaveImage(int maxWidth, int maxHeight)
+  从磁盘缓存中得到图片，重新设置大小及进行一些处理后保存。
+(6) getDownloader()
+  根据ImageLoaderEngine配置得到下载器。
+  如果不允许访问网络，则使用不允许访问网络的图片下载器NetworkDeniedImageDownloader；如果是慢网络情况，则使用慢网络情况下的图片下载器SlowNetworkImageDownloader；否则直接使用ImageLoaderConfiguration中的downloader。

@@ -2,12 +2,12 @@ package com.androidumloader.decode;
 
 import android.annotation.TargetApi;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.graphics.BitmapFactory.Options;
+import android.os.Build;
 
 import com.androidumloader.DisplayImageOptions;
-import com.androidumloader.ImageScaleType;
-import com.androidumloader.ImageSize;
+import com.androidumloader.assist.ImageScaleType;
+import com.androidumloader.assist.ImageSize;
 import com.androidumloader.download.ImageDownloader;
 import com.androidumloader.imageaware.ViewScaleType;
 

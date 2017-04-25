@@ -32,6 +32,8 @@ import com.androidumloader.cache.memory.MemoryCache;
 import com.androidumloader.cache.memory.impl.LruMemoryCache;
 import com.androidumloader.decode.BaseImageDecoder;
 import com.androidumloader.decode.ImageDecoder;
+import com.androidumloader.display.BitmapDisplayer;
+import com.androidumloader.display.SimpleBitmapDisplayer;
 import com.androidumloader.download.BaseImageDownloader;
 import com.androidumloader.download.ImageDownloader;
 import com.androidumloader.utils.L;
