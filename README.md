@@ -98,3 +98,40 @@ AndroidUMLoader图片加载库
 通过缓存目录下名为journal的文件记录缓存的所有操作，并在缓存open时读取journal的文件内容存储到LinkedHashMap<String, Entry> lruEntries中，后面get(String key)获取缓存内容时，会先从lruEntries中得到图片文件名返回文件。
 LRU 的实现跟上面内存缓存类似，lruEntries为new LinkedHashMap<String, Entry>(0, 0.75f, true)，LinkedHashMap 第三个参数表示是否需要根据访问顺序(accessOrder)排序，true 表示根据accessOrder排序，最近访问的跟最新加入的一样放到最后面，
 false 表示根据插入顺序排序。这里为 true 且缓存满时trimToSize()函数始终删除第一个元素，即始终删除最近最少访问的文件。
+
+八、新增assist包（助手包）
+1.新增ContentLengthInputStream类
+InputStream的装饰者，可通过available()函数得到 InputStream 对应数据源的长度(总字节数)。主要用于计算文件存储进度即图片下载进度时的总进度。
+2.新增FailReason类
+  图片下载及显示时的错误原因，目前包括：
+  IO_ERROR 网络连接或是磁盘存储错误。
+  DECODING_ERROR decode image 为 Bitmap 时错误。
+  NETWORK_DENIED 当图片不在缓存中，且设置不允许访问网络时的错误。
+  OUT_OF_MEMORY 内存溢出错误。
+  UNKNOWN 未知错误。
+3.新增FlushedInputStream类
+  为了解决早期 Android 版本BitmapFactory.decodeStream(…)在慢网络情况下 decode image 异常的 Bug。
+  主要通过重写FilterInputStream的 skip(long n) 函数解决，确保 skip(long n) 始终跳过了 n 个字节。
+  如果返回结果即跳过的字节数小于 n，则不断循环直到 skip(long n) 跳过 n 字节或到达文件尾。
+4.新增ImageScaleType类
+  Image 的缩放类型，目前包括：
+  NONE不缩放。
+  NONE_SAFE根据需要以整数倍缩小图片，使得其尺寸不超过 Texture 可接受最大尺寸。
+  IN_SAMPLE_POWER_OF_2根据需要以 2 的 n 次幂缩小图片，使其尺寸不超过目标大小，比较快的缩小方式。
+  IN_SAMPLE_INT根据需要以整数倍缩小图片，使其尺寸不超过目标大小。
+  EXACTLY根据需要缩小图片到宽或高有一个与目标尺寸一致。
+  EXACTLY_STRETCHED根据需要缩放图片到宽或高有一个与目标尺寸一致。
+5.新增ImageSize类
+  表示图片宽高的类。
+  scaleDown(…) 等比缩小宽高。
+  scale(…) 等比放大宽高。
+6.新增LoadedFrom包
+  图片来源枚举类，包括网络、磁盘缓存、内存缓存。
+7.新增 QueueProcessingType类
+  任务队列的处理类型，包括FIFO先进先出、LIFO后进先出。
+8.新增ViewScaleType类
+  ImageAware的 ScaleType。
+  将 ImageView 的 ScaleType 简化为两种FIT_INSIDE和CROP两种。FIT_INSIDE表示将图片缩放到至少宽度和高度有一个小于等于 View 的对应尺寸
+  CROP表示将图片缩放到宽度和高度都大于等于 View 的对应尺寸。
+
+

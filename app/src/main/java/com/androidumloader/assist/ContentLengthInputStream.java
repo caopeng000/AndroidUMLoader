@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.androidumloader;
+package com.androidumloader.assist;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Decorator for {@link java.io.InputStream InputStream}. Provides possibility to return defined stream length by
+ * Decorator for {@link InputStream InputStream}. Provides possibility to return defined stream length by
  * {@link #available()} method.
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com), Mariotaku
