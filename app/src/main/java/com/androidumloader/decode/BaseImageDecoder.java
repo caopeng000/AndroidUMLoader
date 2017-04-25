@@ -6,8 +6,8 @@ import android.graphics.BitmapFactory.Options;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 
-import com.androidumloader.ImageScaleType;
-import com.androidumloader.ImageSize;
+import com.androidumloader.assist.ImageScaleType;
+import com.androidumloader.assist.ImageSize;
 import com.androidumloader.download.ImageDownloader;
 import com.androidumloader.utils.ImageSizeUtils;
 import com.androidumloader.utils.IoUtils;

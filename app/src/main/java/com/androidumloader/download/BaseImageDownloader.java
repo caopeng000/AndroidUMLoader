@@ -11,7 +11,7 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.webkit.MimeTypeMap;
 
-import com.androidumloader.ContentLengthInputStream;
+import com.androidumloader.assist.ContentLengthInputStream;
 import com.androidumloader.utils.IoUtils;
 
 import java.io.BufferedInputStream;
