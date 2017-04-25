@@ -21,6 +21,8 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.os.Build;
 
+import com.androidumloader.assist.QueueProcessingType;
+import com.androidumloader.assist.deque.LIFOLinkedBlockingDeque;
 import com.androidumloader.cache.disc.DiskCache;
 import com.androidumloader.cache.disc.impl.UnlimitedDiskCache;
 import com.androidumloader.cache.disc.impl.ext.LruDiskCache;
@@ -33,6 +35,7 @@ import com.androidumloader.decode.ImageDecoder;
 import com.androidumloader.download.BaseImageDownloader;
 import com.androidumloader.download.ImageDownloader;
 import com.androidumloader.utils.L;
+import com.androidumloader.utils.StorageUtils;
 
 import java.io.File;
 import java.io.IOException;

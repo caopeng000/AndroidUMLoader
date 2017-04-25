@@ -144,6 +144,9 @@ InputStream的装饰者，可通过available()函数得到 InputStream 对应数
   }
   让LinkedBlockingDeque插入总在最前，而remove()本身始终删除第一个元素，所以就变为了后进先出阻塞队列。
   实际一般情况只重写offer(…)函数是不够的，但因为ThreadPoolExecutor默认只用到了BlockingQueue的offer(…)函数，所以这种简单重写后做为ThreadPoolExecutor的任务队列没问题。
-
+十、新增StorageUtils类
+  得到图片 SD 卡缓存目录路径。
+  缓存目录优先选择/Android/data/[app_package_name]/cache；若无权限或不可用，则选择 App 在文件系统的缓存目录context.getCacheDir()；若无权限或不可用，则选择/data/data/[app_package_name]/cache。
+  如果缓存目录选择了/Android/data/[app_package_name]/cache，则新建.nomedia文件表示不允许类似 Galley 这些应用显示此文件夹下图片。不过在 4.0 系统有 Bug 这种方式不生效。
 
 
