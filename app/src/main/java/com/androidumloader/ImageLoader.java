@@ -5,6 +5,8 @@ import android.widget.ImageView;
 
 import com.androidumloader.imageaware.ImageAware;
 import com.androidumloader.imageaware.ImageViewAware;
+import com.androidumloader.listener.ImageLoadingListener;
+import com.androidumloader.listener.ImageLoadingProgressListener;
 
 /******************************************
  * 类名称：ImageLoader

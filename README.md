@@ -89,3 +89,12 @@ AndroidUMLoader图片加载库
 3.新增LimitedAgeDiskCache类，继承BaseDiskCache(判断文件缓存过期时间)
   <1>save的时候修改文件的最后修改日期，然后放到Map里
   <2>get的时候先从Map中读取文件得到最后修改日期，如果当前时间减去最后修改时间大于设定的最大过期时间，就删除，同事移出Map中的对象
+4.新增UnlimitedDiskCache类，不对缓存做出限制
+5.新增LruDiskCache类，通过DiskLruCache类
+限制总字节大小的内存缓存，会在缓存满时优先删除最近最少使用的元素，实现了DiskCache。
+内部有个DiskLruCache cache属性，缓存的存、取操作基本都是由该属性代理完成。
+6.新增DiskLruCache类
+限制总字节大小的内存缓存，会在缓存满时优先删除最近最少使用的元素。
+通过缓存目录下名为journal的文件记录缓存的所有操作，并在缓存open时读取journal的文件内容存储到LinkedHashMap<String, Entry> lruEntries中，后面get(String key)获取缓存内容时，会先从lruEntries中得到图片文件名返回文件。
+LRU 的实现跟上面内存缓存类似，lruEntries为new LinkedHashMap<String, Entry>(0, 0.75f, true)，LinkedHashMap 第三个参数表示是否需要根据访问顺序(accessOrder)排序，true 表示根据accessOrder排序，最近访问的跟最新加入的一样放到最后面，
+false 表示根据插入顺序排序。这里为 true 且缓存满时trimToSize()函数始终删除第一个元素，即始终删除最近最少访问的文件。
