@@ -105,7 +105,26 @@ public class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
 
     @Override
     public boolean onBytesCopied(int current, int total) {
-        return false;
+        return syncLoading || fireProgressEvent(current, total);
+    }
+
+    private boolean fireProgressEvent(final int current, final int total) {
+        if (isTaskInterrupted() || isTaskNotActual()) return false;
+        if (progressListener != null) {
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    progressListener.onProgressUpdate(uri, imageAware.getWrappedView(), current, total);
+                }
+            };
+            runTask(r, false, handler, engine);
+        }
+        return true;
+    }
+
+
+    String getLoadingUri() {
+        return uri;
     }
 
     @Override

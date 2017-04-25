@@ -237,3 +237,163 @@ InputStream的装饰者，可通过available()函数得到 InputStream 对应数
    (1) run()
 
    主要通过 imageLoadingInfo 得到BitmapProcessor处理图片，并用处理后的图片和配置新建一个DisplayBitmapTask在ImageAware中显示图片
+十七、新增ImageLoaderConfiguration
+   ImageLoader的配置信息，包括图片最大尺寸、线程池、缓存、下载器、解码器等等。
+   主要属性：
+   (1). Resources resources
+   程序本地资源访问器，用于加载DisplayImageOptions中设置的一些 App 中图片资源。
+   (2). int maxImageWidthForMemoryCache
+
+   内存缓存的图片最大宽度。
+   (3). int maxImageHeightForMemoryCache
+
+   内存缓存的图片最大高度。
+   (4). int maxImageWidthForDiskCache
+
+   磁盘缓存的图片最大宽度。
+   (5). int maxImageHeightForDiskCache
+
+   磁盘缓存的图片最大高度。
+   (6). BitmapProcessor processorForDiskCache
+
+   图片处理器，用于处理从磁盘缓存中读取到的图片。
+   (7). Executor taskExecutor
+
+   ImageLoaderEngine中用于执行从源获取图片任务的 Executor。
+   (18). Executor taskExecutorForCachedImages
+
+   ImageLoaderEngine中用于执行从缓存获取图片任务的 Executor。
+   (19). boolean customExecutor
+
+   用户是否自定义了上面的 taskExecutor。
+   (20). boolean customExecutorForCachedImages
+
+   用户是否自定义了上面的 taskExecutorForCachedImages。
+   (21). int threadPoolSize
+
+   上面两个默认线程池的核心池大小，即最大并发数。
+   (22). int threadPriority
+
+   上面两个默认线程池的线程优先级。
+   (23). QueueProcessingType tasksProcessingType
+
+   上面两个默认线程池的线程队列类型。目前只有 FIFO, LIFO 两种可供选择。
+   (24). MemoryCache memoryCache
+
+   图片内存缓存。
+   (25). DiskCache diskCache
+
+   图片磁盘缓存，一般放在 SD 卡。
+   (26). ImageDownloader downloader
+
+   图片下载器。
+   (27). ImageDecoder decoder
+
+   图片解码器，内部可使用我们常用的BitmapFactory.decode(…)将图片资源解码成Bitmap对象。
+   (28). DisplayImageOptions defaultDisplayImageOptions
+
+   图片显示的配置项。比如加载前、加载中、加载失败应该显示的占位图片，图片是否需要在磁盘缓存，是否需要在内存缓存等。
+   (29). ImageDownloader networkDeniedDownloader
+
+   不允许访问网络的图片下载器。
+   (30). ImageDownloader slowNetworkDownloader
+
+   慢网络情况下的图片下载器。
+十八、新增DefaultConfigurationFactory类
+   为ImageLoaderConfiguration及ImageLoaderEngine提供一些默认配置。
+   (1). createExecutor(int threadPoolSize, int threadPriority, QueueProcessingType tasksProcessingType)
+
+   创建线程池。
+   threadPoolSize表示核心池大小(最大并发数)。
+   threadPriority表示线程优先级。
+   tasksProcessingType表示线程队列类型，目前只有 FIFO, LIFO 两种可供选择。
+   内部实现会调用createThreadFactory(…)返回一个支持线程优先级设置，并且以固定规则命名新建的线程的线程工厂类DefaultConfigurationFactory.DefaultThreadFactory。
+   (2). createTaskDistributor()
+
+   为ImageLoaderEngine中的任务分发器taskDistributor提供线程池，该线程池为 normal 优先级的无并发大小限制的线程池。
+   (3). createFileNameGenerator()
+
+   返回一个HashCodeFileNameGenerator对象，即以 uri HashCode 为文件名的文件名生成器。
+   (4). createDiskCache(Context context, FileNameGenerator diskCacheFileNameGenerator, long diskCacheSize, int diskCacheFileCount)
+
+   创建一个 Disk Cache。如果 diskCacheSize 或者 diskCacheFileCount 大于 0，返回一个LruDiskCache，否则返回无大小限制的UnlimitedDiskCache。
+   (5). createMemoryCache(Context context, int memoryCacheSize)
+
+   创建一个 Memory Cache。返回一个LruMemoryCache，若 memoryCacheSize 为 0，则设置该内存缓存的最大字节数为 App 最大可用内存的 1/8。
+   这里 App 的最大可用内存也支持系统在 Honeycomb 之后(ApiLevel >= 11) application 中android:largeHeap="true"的设置。
+   (6). createImageDownloader(Context context)
+
+   创建图片下载器，返回一个BaseImageDownloader。
+   (7). createImageDecoder(boolean loggingEnabled)
+
+   创建图片解码器，返回一个BaseImageDecoder。
+   (8). createBitmapDisplayer()
+
+   创建图片显示器，返回一个SimpleBitmapDisplayer。
+   DefaultConfigurationFactory.DefaultThreadFactory
+   默认的线程工厂类，为
+   DefaultConfigurationFactory.createExecutor(…)
+   和
+   DefaultConfigurationFactory.createTaskDistributor(…)
+   提供线程工厂。支持线程优先级设置，并且以固定规则命名新建的线程。
+   PS：重命名线程是个很好的习惯，它的一大作用就是方便问题排查，比如性能优化，用 TraceView 查看线程，根据名字很容易分辨各个线程。
+十九、新增DisplayImageOptions类
+   图片显示的配置项。比如加载前、加载中、加载失败应该显示的占位图片，图片是否需要在磁盘缓存，是否需要在 memory 缓存等。
+   主要属性及含义：
+   (1). int imageResOnLoading
+
+   图片正在加载中的占位图片的 resource id，优先级比下面的imageOnLoading高，当存在时，imageOnLoading不起作用。
+   (2). int imageResForEmptyUri
+
+   空 uri 时的占位图片的 resource id，优先级比下面的imageForEmptyUri高，当存在时，imageForEmptyUri不起作用。
+   (3). int imageResOnFail
+
+   加载失败时的占位图片的 resource id，优先级比下面的imageOnFail高，当存在时，imageOnFail不起作用。
+   (4). Drawable imageOnLoading
+
+   加载中的占位图片的 drawabled 对象，默认为 null。
+   (5). Drawable imageForEmptyUri
+
+   空 uri 时的占位图片的 drawabled 对象，默认为 null。
+   (6). Drawable imageOnFail
+
+   加载失败时的占位图片的 drawabled 对象，默认为 null。
+   (7). boolean resetViewBeforeLoading
+
+   在加载前是否重置 view，通过 Builder 构建的对象默认为 false。
+   (8). boolean cacheInMemory
+
+   是否缓存在内存中，通过 Builder 构建的对象默认为 false。
+   (9). boolean cacheOnDisk
+
+   是否缓存在磁盘中，通过 Builder 构建的对象默认为 false。
+   (10). ImageScaleType imageScaleType
+
+   图片的缩放类型，通过 Builder 构建的对象默认为IN_SAMPLE_POWER_OF_2。
+   (11). Options decodingOptions;
+
+   为 BitmapFactory.Options，用于BitmapFactory.decodeStream(imageStream, null, decodingOptions)得到图片尺寸等信息。
+   (12). int delayBeforeLoading
+
+   设置在开始加载前的延迟时间，单位为毫秒，通过 Builder 构建的对象默认为 0。
+   (13). boolean considerExifParams
+
+   是否考虑图片的 EXIF 信息，通过 Builder 构建的对象默认为 false。
+   (14). Object extraForDownloader
+
+   下载器需要的辅助信息。下载时传入ImageDownloader.getStream(String, Object)的对象，方便用户自己扩展，默认为 null。
+   (15). BitmapProcessor preProcessor
+
+   缓存在内存之前的处理程序，默认为 null。
+   (16). BitmapProcessor postProcessor
+
+   缓存在内存之后的处理程序，默认为 null。
+   (17). BitmapDisplayer displayer
+
+   图片的显示方式，通过 Builder 构建的对象默认为SimpleBitmapDisplayer。
+   (18). Handler handler
+
+   handler 对象，默认为 null。
+   (19). boolean isSyncLoading
+
+   是否同步加载，通过 Builder 构建的对象默认为 false。

@@ -86,6 +86,7 @@ class ImageLoaderEngine {
     }
 
     /**
+     * Returns URI of image which is loading at this moment into passed {@link com.nostra13.universalimageloader.core.imageaware.ImageAware}
      */
     String getLoadingUriForView(ImageAware imageAware) {
         return cacheKeysForImageAwares.get(imageAware.getId());
@@ -102,6 +103,7 @@ class ImageLoaderEngine {
     /**
      * Cancels the task of loading and displaying image for incoming <b>imageAware</b>.
      *
+     * @param imageAware {@link com.nostra13.universalimageloader.core.imageaware.ImageAware} for which display task
      *                   will be cancelled
      */
     void cancelDisplayTaskFor(ImageAware imageAware) {
@@ -110,6 +112,8 @@ class ImageLoaderEngine {
 
     /**
      * Denies or allows engine to download images from the network.<br /> <br /> If downloads are denied and if image
+     * isn't cached then {@link ImageLoadingListener#onLoadingFailed(String, View, FailReason)} callback will be fired
+     * with {@link FailReason.FailType#NETWORK_DENIED}
      *
      * @param denyNetworkDownloads pass <b>true</b> - to deny engine to download images from the network; <b>false</b> -
      *                             to allow engine to download images from network.
@@ -119,8 +123,10 @@ class ImageLoaderEngine {
     }
 
     /**
+     * Sets option whether ImageLoader will use {@link FlushedInputStream} for network downloads to handle <a
      * href="http://code.google.com/p/android/issues/detail?id=6066">this known problem</a> or not.
      *
+     * @param handleSlowNetwork pass <b>true</b> - to use {@link FlushedInputStream} for network downloads; <b>false</b>
      *                          - otherwise.
      */
     void handleSlowNetwork(boolean handleSlowNetwork) {
@@ -147,6 +153,7 @@ class ImageLoaderEngine {
      * Stops engine, cancels all running and scheduled display image tasks. Clears internal data.
      * <br />
      * <b>NOTE:</b> This method doesn't shutdown
+     * {@linkplain com.nostra13.universalimageloader.core.ImageLoaderConfiguration.Builder#taskExecutor(java.util.concurrent.Executor)
      * custom task executors} if you set them.
      */
     void stop() {

@@ -18,7 +18,7 @@ package com.androidumloader.utils;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES10;
 
-import com.androidumloader.ImageSize;
+import com.androidumloader.assist.ImageSize;
 import com.androidumloader.imageaware.ImageAware;
 import com.androidumloader.imageaware.ViewScaleType;
 
