@@ -231,3 +231,9 @@ InputStream的装饰者，可通过available()函数得到 InputStream 对应数
 (6) getDownloader()
   根据ImageLoaderEngine配置得到下载器。
   如果不允许访问网络，则使用不允许访问网络的图片下载器NetworkDeniedImageDownloader；如果是慢网络情况，则使用慢网络情况下的图片下载器SlowNetworkImageDownloader；否则直接使用ImageLoaderConfiguration中的downloader。
+十六、新增ProcessAndDisplayImageTask类
+   处理并显示图片的Task，实现了Runnable接口。
+   主要函数：
+   (1) run()
+
+   主要通过 imageLoadingInfo 得到BitmapProcessor处理图片，并用处理后的图片和配置新建一个DisplayBitmapTask在ImageAware中显示图片
