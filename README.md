@@ -133,5 +133,17 @@ InputStream的装饰者，可通过available()函数得到 InputStream 对应数
   ImageAware的 ScaleType。
   将 ImageView 的 ScaleType 简化为两种FIT_INSIDE和CROP两种。FIT_INSIDE表示将图片缩放到至少宽度和高度有一个小于等于 View 的对应尺寸
   CROP表示将图片缩放到宽度和高度都大于等于 View 的对应尺寸。
+九、新增deque包（双端队列）
+1.新增Deque接口
+2.新增BlockingDeque接口
+3.新增LIFOLinkedBlockingDeque类
+  后进先出阻塞队列。重写LinkedBlockingDeque的offer(…)函数如下：
+  @Override
+  public boolean offer(T e) {
+      return super.offerFirst(e);
+  }
+  让LinkedBlockingDeque插入总在最前，而remove()本身始终删除第一个元素，所以就变为了后进先出阻塞队列。
+  实际一般情况只重写offer(…)函数是不够的，但因为ThreadPoolExecutor默认只用到了BlockingQueue的offer(…)函数，所以这种简单重写后做为ThreadPoolExecutor的任务队列没问题。
+
 
 
