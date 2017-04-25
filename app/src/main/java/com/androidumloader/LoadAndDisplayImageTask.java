@@ -163,8 +163,8 @@ public class LoadAndDisplayImageTask implements Runnable, IoUtils.CopyListener {
         } finally {
             loadFromUriLock.unlock();
         }
-
-
+        DisplayBitmapTask displayBitmapTask = new DisplayBitmapTask(bmp, imageLoadingInfo, engine, loadedFrom);
+        runTask(displayBitmapTask, syncLoading, handler, engine);
     }
 
     private void fireCancelEvent() {
