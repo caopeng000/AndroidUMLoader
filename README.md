@@ -1,7 +1,8 @@
-# AndroidUMLoader
-#AndroidUMLoader图片加载库
-##2017/4/24
-##一.设计图片SDK需要的东西
+README
+===========================
+# AndroidUMLoader图片加载库
+## 2017/4/24
+## 一.设计图片SDK需要的东西
 1.url
 2.imageView
 3.加载配置(占位图、错误图、是否缓存、加载图形(接口))  DisplayImageOptions 使用建造者模式
@@ -12,7 +13,7 @@
 8.缓存
 9.线程池等配置项ImageLoaderConfiguration类
 
-##二、新增aware包(防止内存泄露)
+## 二、新增aware包(防止内存泄露)
 1.新增ImageAware接口，主要负责获取图片的宽高、是否被回收、得到自身图片、设置图片
 2.新增ViewAware类(抽象类)，该类实现ImageAware接口
    <1>获取传递过来的ImageView将其包装成WeakReference<View>
