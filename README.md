@@ -22,13 +22,13 @@ README
    <4>抽象setImageDrawableInto和setImageBitmapInto
 3.新增ImageViewAware类,继承ViewAware类，再次复写得到宽高等方法，判断如果宽高如果等于0的时候，通过反射得到其最大值
 
-##三、新增download包(下载类)
+## 三、新增download包(下载类)
 1.新增ImageDownloader接口，返回一个InputStream
 2.新增BaseImageDownloader类，实现ImageDownloader接口，完成从网络、Assects、file、drawable的流
    <1>ContentLengthInputStream 是InputStream的装饰者，可通过available()函数得到 InputStream 对应数据源的长度(总字节数)。主要用于计算文件存储进度即图片下载进度时的总进度。
    <2>增加对网络、Assects、file、drawable获取流
 
-##四、新增decode包(通过流解析成图片)
+## 四、新增decode包(通过流解析成图片)
 1.新增ImageDecoder接口，通过ImageDecodingInfo得到Bitmap对象
 2.新增BaseImageDecoder类，实现ImageDecoder接口获取Bitmap
    <1>拿到流以后 defineImageSizeAndRotation 定义文件大小和获取图片旋转方向
@@ -59,7 +59,7 @@ README
 
    <3>considerExactScaleAndOrientatiton  根据参数将图片放大、翻转、旋转为合适的样子返回。
 
-##五、新增cache包和memory包
+## 五、新增cache包和memory包
 1.新增MemoryCache接口，用于对内存缓存的增、删、查
 2.新增BaseMemoryCache(抽象)类，实现MemoryCache接口 (基本的内存缓存)
   <1>通过保存 Map<String, Reference<Bitmap>> 将强引用保存为弱引用
@@ -79,11 +79,11 @@ README
   <2>LinkedHashMap accessOrder设为true以后，最近访问的数据将会被放到前面，
   <3>清理缓存，如果超出最大值，则需要删除老的数据
 
-##六、新增naming包(文件命名)
+## 六、新增naming包(文件命名)
 1.新增FileNameGenerator接口 判断给文件设置名称
 2.新增HashCodeFileNameGenerator类，实现FileNameGenerator接口
 
-##七、新增disc包(硬盘缓存)
+## 七、新增disc包(硬盘缓存)
 1.新增DiskCache接口 增、删、查
 2.新增BaseDiskCache类，实现DiskCache接口
   <1>save的时候先创建了一个临时文件，当缓存完毕的时候通过重命名改成之前的文件renameto
@@ -101,7 +101,7 @@ README
 LRU 的实现跟上面内存缓存类似，lruEntries为new LinkedHashMap<String, Entry>(0, 0.75f, true)，LinkedHashMap 第三个参数表示是否需要根据访问顺序(accessOrder)排序，true 表示根据accessOrder排序，最近访问的跟最新加入的一样放到最后面，
 false 表示根据插入顺序排序。这里为 true 且缓存满时trimToSize()函数始终删除第一个元素，即始终删除最近最少访问的文件。
 
-##八、新增assist包（助手包）
+## 八、新增assist包（助手包）
 1.新增ContentLengthInputStream类
 InputStream的装饰者，可通过available()函数得到 InputStream 对应数据源的长度(总字节数)。主要用于计算文件存储进度即图片下载进度时的总进度。
 2.新增FailReason类
@@ -135,7 +135,7 @@ InputStream的装饰者，可通过available()函数得到 InputStream 对应数
   ImageAware的 ScaleType。
   将 ImageView 的 ScaleType 简化为两种FIT_INSIDE和CROP两种。FIT_INSIDE表示将图片缩放到至少宽度和高度有一个小于等于 View 的对应尺寸
   CROP表示将图片缩放到宽度和高度都大于等于 View 的对应尺寸。
-##九、新增deque包（双端队列）
+## 九、新增deque包（双端队列）
 1.新增Deque接口
 2.新增BlockingDeque接口
 3.新增LIFOLinkedBlockingDeque类
@@ -146,11 +146,11 @@ InputStream的装饰者，可通过available()函数得到 InputStream 对应数
   }
   让LinkedBlockingDeque插入总在最前，而remove()本身始终删除第一个元素，所以就变为了后进先出阻塞队列。
   实际一般情况只重写offer(…)函数是不够的，但因为ThreadPoolExecutor默认只用到了BlockingQueue的offer(…)函数，所以这种简单重写后做为ThreadPoolExecutor的任务队列没问题。
-##十、新增StorageUtils类
+## 十、新增StorageUtils类
   得到图片 SD 卡缓存目录路径。
   缓存目录优先选择/Android/data/[app_package_name]/cache；若无权限或不可用，则选择 App 在文件系统的缓存目录context.getCacheDir()；若无权限或不可用，则选择/data/data/[app_package_name]/cache。
   如果缓存目录选择了/Android/data/[app_package_name]/cache，则新建.nomedia文件表示不允许类似 Galley 这些应用显示此文件夹下图片。不过在 4.0 系统有 Bug 这种方式不生效。
-##十一、新增display包（展示图片）
+## 十一、新增display包（展示图片）
 1.新增BitmapDisplayer接口
   void display(Bitmap bitmap, ImageAware imageAware, LoadedFrom loadedFrom);
 2.新增FadeInBitmapDisplayer类(图片渐隐类，实现了动画)，实现BitmapDisplayer接口
@@ -160,7 +160,7 @@ InputStream的装饰者，可通过available()函数得到 InputStream 对应数
 4.新增CircleBitmapDisplayer类，加载圆形类
 5.新增RoundedBitmapDisplayer类，加载圆角类
 6.新增RoundedVignetteBitmapDisplayer类，加载圆角并且有影晕效果
-##十二、新增ImageLoadingInfo类
+## 十二、新增ImageLoadingInfo类
   加载和显示图片任务需要的信息。
   String uri 图片 url。
   String memoryCacheKey 图片缓存 key。
@@ -170,13 +170,13 @@ InputStream的装饰者，可通过available()函数得到 InputStream 对应数
   ImageLoadingListener listener 图片加载各种时刻的回调接口。
   ImageLoadingProgressListener progressListener 图片加载进度的回调接口。
   ReentrantLock loadFromUriLock 图片加载中的重入锁。
-##十三、新增MemoryCacheUtils类
+## 十三、新增MemoryCacheUtils类
   内存缓存工具类。可用于根据 uri 生成内存缓存 key，缓存 key 比较，根据 uri 得到所有相关的 key 或图片，删除某个 uri 的内存缓存。
   generateKey(String imageUri, ImageSize targetSize)
   根据 uri 生成内存缓存 key，key 规则为[imageUri]_[width]x[height]。
-##十四、新增FuzzyKeyMemoryCache类
+## 十四、新增FuzzyKeyMemoryCache类
   如果内存缓存不允许缓存一张图片的多个尺寸，则用FuzzyKeyMemoryCache做封装，同一个图片新的尺寸会覆盖缓存中该图片老的尺寸。
-##十五、新增LoadAndDisplayImageTask类
+## 十五、新增LoadAndDisplayImageTask类
   加载并显示图片的Task，实现了Runnable接口，用于从网络、文件系统或内存获取图片并解析，然后调用DisplayBitmapTask在ImageAware中显示图片。
   主要函数：
   (1) run()
@@ -233,13 +233,13 @@ InputStream的装饰者，可通过available()函数得到 InputStream 对应数
 (6) getDownloader()
   根据ImageLoaderEngine配置得到下载器。
   如果不允许访问网络，则使用不允许访问网络的图片下载器NetworkDeniedImageDownloader；如果是慢网络情况，则使用慢网络情况下的图片下载器SlowNetworkImageDownloader；否则直接使用ImageLoaderConfiguration中的downloader。
-##十六、新增ProcessAndDisplayImageTask类
+## 十六、新增ProcessAndDisplayImageTask类
    处理并显示图片的Task，实现了Runnable接口。
    主要函数：
    (1) run()
 
    主要通过 imageLoadingInfo 得到BitmapProcessor处理图片，并用处理后的图片和配置新建一个DisplayBitmapTask在ImageAware中显示图片
-##十七、新增ImageLoaderConfiguration
+## 十七、新增ImageLoaderConfiguration
    ImageLoader的配置信息，包括图片最大尺寸、线程池、缓存、下载器、解码器等等。
    主要属性：
    (1). Resources resources
@@ -301,7 +301,7 @@ InputStream的装饰者，可通过available()函数得到 InputStream 对应数
    (30). ImageDownloader slowNetworkDownloader
 
    慢网络情况下的图片下载器。
-##十八、新增DefaultConfigurationFactory类
+## 十八、新增DefaultConfigurationFactory类
    为ImageLoaderConfiguration及ImageLoaderEngine提供一些默认配置。
    (1). createExecutor(int threadPoolSize, int threadPriority, QueueProcessingType tasksProcessingType)
 
@@ -339,7 +339,7 @@ InputStream的装饰者，可通过available()函数得到 InputStream 对应数
    DefaultConfigurationFactory.createTaskDistributor(…)
    提供线程工厂。支持线程优先级设置，并且以固定规则命名新建的线程。
    PS：重命名线程是个很好的习惯，它的一大作用就是方便问题排查，比如性能优化，用 TraceView 查看线程，根据名字很容易分辨各个线程。
-##十九、新增DisplayImageOptions类
+## 十九、新增DisplayImageOptions类
    图片显示的配置项。比如加载前、加载中、加载失败应该显示的占位图片，图片是否需要在磁盘缓存，是否需要在 memory 缓存等。
    主要属性及含义：
    (1). int imageResOnLoading
