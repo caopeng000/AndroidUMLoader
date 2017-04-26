@@ -10,6 +10,7 @@ AndroidUMLoader图片加载库
 6.下载器
 7.解码器
 8.缓存
+9.线程池等配置项ImageLoaderConfiguration类
 
 二、新增aware包(防止内存泄露)
 1.新增ImageAware接口，主要负责获取图片的宽高、是否被回收、得到自身图片、设置图片
